@@ -4,8 +4,10 @@ from pytests.security.rbac_base import RbacBase
 from remote.remote_util import RemoteMachineShellConnection
 from upgrade_2i import UpgradeSecondaryIndex
 from pytests.tuqquery.n1ql_rbac_2 import RbacN1QL
+import logging
 
 QUERY_TEMPLATE = "SELECT {0} FROM %s "
+log = logging.getLogger(__name__)
 
 class UpgradeN1QLRBAC(UpgradeSecondaryIndex,RbacN1QL):
     def setUp(self):
@@ -348,7 +350,7 @@ class UpgradeN1QLRBAC(UpgradeSecondaryIndex,RbacN1QL):
         self.shell.log_command_output(output, error)
         self.assertTrue(any("success" in line for line in output), "Unable to prepare select from {0} as user {1}".
                         format(self.buckets[0].name, self.users[0]['id']))
-        self.log.info("Prepare query executed successfully")
+        log.info("Prepare query executed successfully")
         self.create_and_verify_system_catalog_users_helper()
 
 
@@ -466,7 +468,7 @@ class UpgradeN1QLRBAC(UpgradeSecondaryIndex,RbacN1QL):
          self.shell.log_command_output(output, error)
          self.assertTrue(any("success" in line for line in output), "Unable to insert into {0} as user {1}".
                         format(bucket.name, 'johnInsert'))
-         self.log.info("Query executed successfully")
+         log.info("Query executed successfully")
          old_name = "employee-14"
          new_name = "employee-14-2"
          cmd = "{6} -u {0}:{1} http://{2}:8093/query/service -d " \
@@ -476,7 +478,7 @@ class UpgradeN1QLRBAC(UpgradeSecondaryIndex,RbacN1QL):
          self.shell.log_command_output(output, error)
          self.assertTrue(any("success" in line for line in output), "Unable to update into {0} as user {1}".
                         format(bucket.name, 'johnUpdate'))
-         self.log.info("Query executed successfully")
+         log.info("Query executed successfully")
          del_name = "employee-14"
          cmd = "{5} -u {0}:{1} http://{2}:8093/query/service -d " \
               "'statement=DELETE FROM {3} a WHERE name = '{4}''".\
@@ -485,7 +487,7 @@ class UpgradeN1QLRBAC(UpgradeSecondaryIndex,RbacN1QL):
          self.shell.log_command_output(output, error)
          self.assertTrue(any("success" in line for line in output), "Unable to delete from {0} as user {1}".
                         format(bucket.name, 'john_delete'))
-         self.log.info("Query executed successfully")
+         log.info("Query executed successfully")
          cmd = "{4} -u {0}:{1} http://{2}:8093/query/service -d 'statement=SELECT * from {3} LIMIT 10'".\
                 format('john_select', 'password', self.master.ip,'bucket0',self.curl_path)
          output, error = self.shell.execute_command(cmd)
@@ -614,7 +616,7 @@ class UpgradeN1QLRBAC(UpgradeSecondaryIndex,RbacN1QL):
             self.shell.log_command_output(output, error)
             self.assertTrue(any("success" in line for line in output), "Unable to delete from {0} as user {1}".
                         format(bucket.name, 'read_user'))
-            self.log.info("Query executed successfully")
+            log.info("Query executed successfully")
 
             # change permission of cadmin user and verify its able to execute the correct query.
             self.query = "GRANT {0} to {1}".format("query_system_catalog",'cadmin')
@@ -670,7 +672,7 @@ class UpgradeN1QLRBAC(UpgradeSecondaryIndex,RbacN1QL):
              self.shell.log_command_output(output, error)
              self.assertTrue(any("success" in line for line in output), "Unable to insert into {0} as user {1}".
                             format(bucket.name, 'john_bucketadminAll'))
-             self.log.info("Query executed successfully")
+             log.info("Query executed successfully")
              old_name = "employee-14"
              new_name = "employee-14-2"
              cmd = "{6} -u {0}:{1} http://{2}:8093/query/service -d " \
@@ -680,7 +682,7 @@ class UpgradeN1QLRBAC(UpgradeSecondaryIndex,RbacN1QL):
              self.shell.log_command_output(output, error)
              self.assertTrue(any("success" in line for line in output), "Unable to update into {0} as user {1}".
                             format(bucket.name, 'john_bucketadminAll'))
-             self.log.info("Query executed successfully")
+             log.info("Query executed successfully")
              del_name = "employee-14"
              cmd = "{5} -u {0}:{1} http://{2}:8093/query/service -d " \
                   "'statement=DELETE FROM {3} a WHERE name = '{4}''".\
@@ -689,7 +691,7 @@ class UpgradeN1QLRBAC(UpgradeSecondaryIndex,RbacN1QL):
              self.shell.log_command_output(output, error)
              self.assertTrue(any("success" in line for line in output), "Unable to delete from {0} as user {1}".
                             format(bucket.name, 'john_bucketadminAll'))
-             self.log.info("Query executed successfully")
+             log.info("Query executed successfully")
              cmd = "{4} -u {0}:{1} http://{2}:8093/query/service -d 'statement=SELECT * from {3} LIMIT 10'".\
                 format('cluster_user', 'password', self.master.ip,bucket.name,self.curl_path)
              output, error = self.shell.execute_command(cmd)
@@ -713,7 +715,7 @@ class UpgradeN1QLRBAC(UpgradeSecondaryIndex,RbacN1QL):
          self.shell.log_command_output(output, error)
          self.assertTrue(any("success" in line for line in output), "Unable to insert into {0} as user {1}".
                         format(bucket.name, 'johnInsert'))
-         self.log.info("Query executed successfully")
+         log.info("Query executed successfully")
          old_name = "employee-14"
          new_name = "employee-14-2"
          cmd = "{6} -u {0}:{1} http://{2}:8093/query/service -d " \
@@ -723,7 +725,7 @@ class UpgradeN1QLRBAC(UpgradeSecondaryIndex,RbacN1QL):
          self.shell.log_command_output(output, error)
          self.assertTrue(any("success" in line for line in output), "Unable to update into {0} as user {1}".
                         format(bucket.name, 'johnUpdate'))
-         self.log.info("Query executed successfully")
+         log.info("Query executed successfully")
          del_name = "employee-14"
          cmd = "{5} -u {0}:{1} http://{2}:8093/query/service -d " \
               "'statement=select * from {3} WHERE name = '{4}' limit 2'".\
@@ -732,7 +734,7 @@ class UpgradeN1QLRBAC(UpgradeSecondaryIndex,RbacN1QL):
          self.shell.log_command_output(output, error)
          self.assertTrue(any("success" in line for line in output), "Unable to select from {0} as user {1}".
                         format(bucket.name, 'bob'))
-         self.log.info("Query executed successfully")
+         log.info("Query executed successfully")
          cmd = "{4} -u {0}:{1} http://{2}:8093/query/service -d 'statement=SELECT * from {3} LIMIT 10'".\
                 format('mary', 'password', self.master.ip,'bucket0',self.curl_path)
          output, error = self.shell.execute_command(cmd)
@@ -788,7 +790,7 @@ class UpgradeN1QLRBAC(UpgradeSecondaryIndex,RbacN1QL):
             self.shell.log_command_output(output, error)
             self.assertTrue(any("success" in line for line in output), "Unable to delete from {0} as user {1}".
                         format(bucket.name, 'john_admin'))
-            self.log.info("Query executed successfully")
+            log.info("Query executed successfully")
 
             # change permission of bob user and verify its able to execute the correct query.
             self.query = "GRANT {0} to {1}".format("query_system_catalog",'bob')
@@ -849,7 +851,7 @@ class UpgradeN1QLRBAC(UpgradeSecondaryIndex,RbacN1QL):
             self.shell.log_command_output(output, error)
             self.assertTrue(any("success" in line for line in output), "Unable to delete from {0} as user {1}".
                         format(bucket.name, 'john_select2'))
-            self.log.info("Query executed successfully")
+            log.info("Query executed successfully")
 
             # change permission of john_delete and verify its able to execute the correct query.
             self.query = "GRANT {0} on {1} to {2}".format("query_select",bucket.name,'john_delete')
@@ -869,11 +871,11 @@ class UpgradeN1QLRBAC(UpgradeSecondaryIndex,RbacN1QL):
         if not users:
             users = self.users
         RbacBase().create_user_source(users,'builtin',self.master)
-        self.log.info("SUCCESS: User(s) %s created"
+        log.info("SUCCESS: User(s) %s created"
                       % ','.join([user['name'] for user in users]))
 
     def create_users_before_upgrade_non_ldap(self):
-        self.log.info("create a read only user account")
+        log.info("create a read only user account")
         self.shell.execute_command("%scouchbase-cli "
                                               "user-manage -c %s:8091 --set "
                                               "--ro-username=%s "
@@ -881,7 +883,7 @@ class UpgradeN1QLRBAC(UpgradeSecondaryIndex,RbacN1QL):
                                               "-u Administrator -p %s "
                                       % (self.path, self.master.ip,
                                                   'ro_non_ldap', 'password'))
-        self.log.info("create a bucket admin on bucket0 user account")
+        log.info("create a bucket admin on bucket0 user account")
         self.shell.execute_command("%scouchbase-cli "
                                               "admin-role-manage -c %s:8091 --set-users=bob "
                                               "--set-names=Bob "
@@ -890,7 +892,7 @@ class UpgradeN1QLRBAC(UpgradeSecondaryIndex,RbacN1QL):
                                       % (self.path, self.master.ip,
                                                 'password'))
 
-        self.log.info("create a bucket admin on all buckets user account")
+        log.info("create a bucket admin on all buckets user account")
         self.shell.execute_command("%scouchbase-cli "
                                               "admin-role-manage -c %s:8091 --set-users=mary "
                                               "--set-names=Mary "
@@ -899,7 +901,7 @@ class UpgradeN1QLRBAC(UpgradeSecondaryIndex,RbacN1QL):
                                       % (self.path, self.master.ip,
                                                   'password'))
 
-        self.log.info("create a cluster admin user account")
+        log.info("create a cluster admin user account")
         self.shell.execute_command("%scouchbase-cli "
                                               "admin-role-manage -c %s:8091 --set-users=john_cluster "
                                               "--set-names=john_cluster "
@@ -908,7 +910,7 @@ class UpgradeN1QLRBAC(UpgradeSecondaryIndex,RbacN1QL):
                                      % (self.path, self.master.ip,
                                                   'password'))
 
-        self.log.info("create a admin user account")
+        log.info("create a admin user account")
         self.shell.execute_command("%scouchbase-cli "
                                               "admin-role-manage -c %s:8091 --set-users=john_admin "
                                               "--set-names=john_admin "
